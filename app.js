@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/user", require("./routes/user"));
+app.use("/province", require("./routes/province"));
 
 app.use(errorHandler);
 

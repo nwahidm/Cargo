@@ -20,6 +20,9 @@ const errorHandler = (error, req, res, next) => {
   } else if (error.name == "InvalidUserId") {
     code = 404;
     message = "User Not Found";
+  } else if (error.name == "InvalidProvinceId") {
+    code = 404;
+    message = "Province Not Found";
   }
 
   res.status(code).json({ status: code, message });
