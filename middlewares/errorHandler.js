@@ -26,6 +26,9 @@ const errorHandler = (error, req, res, next) => {
   } else if (error.name == "InvalidCityId") {
     code = 404;
     message = "City Not Found";
+  } else if (error.name == "InvalidBranchId") {
+    code = 404;
+    message = "Branch Not Found";
   }
 
   res.status(code).json({ status: code, message });
