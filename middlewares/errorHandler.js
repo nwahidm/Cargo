@@ -23,6 +23,9 @@ const errorHandler = (error, req, res, next) => {
   } else if (error.name == "InvalidProvinceId") {
     code = 404;
     message = "Province Not Found";
+  } else if (error.name == "InvalidCityId") {
+    code = 404;
+    message = "City Not Found";
   }
 
   res.status(code).json({ status: code, message });

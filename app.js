@@ -11,6 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/user", require("./routes/user"));
 app.use("/province", require("./routes/province"));
+app.use("/city", require("./routes/city"));
 
 app.use(errorHandler);
 
