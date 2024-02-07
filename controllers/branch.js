@@ -75,7 +75,7 @@ class BranchController {
       if (!isEmpty(phoneNumber)) assign(payload, { phoneNumber });
       if (!isEmpty(provinceId)) assign(payload, { provinceId });
       if (!isEmpty(cityId)) assign(payload, { cityId });
-      if (!isEmpty(status)) assign(payload, { status });
+      if (status) assign(payload, { status });
 
       await Branch.update(payload, { where: { id } });
 

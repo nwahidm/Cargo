@@ -13,6 +13,7 @@ app.use("/user", require("./routes/user"));
 app.use("/province", require("./routes/province"));
 app.use("/city", require("./routes/city"));
 app.use("/branch", require("./routes/branch"));
+app.use("/forwarder", require("./routes/forwarder"));
 
 app.use(errorHandler);
 

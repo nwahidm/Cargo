@@ -1,22 +1,24 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Branch extends Model {
+  class Forwarder extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Branch.belongsTo(models.Province, {
-        foreignKey: "provinceId",
+      Forwarder.belongsTo(models.Province, {
+        foreignKey: "originProvince",
+        as: "Origin"
       });
-      Branch.belongsTo(models.City, {
-        foreignKey: "cityId",
+      Forwarder.belongsTo(models.Province, {
+        foreignKey: "destinationProvince",
+        as: "Destination"
       });
     }
   }
-  Branch.init(
+  Forwarder.init(
     {
       name: {
         type: DataTypes.STRING,
@@ -30,18 +32,27 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      address: {
-        type: DataTypes.TEXT,
-      },
-      phoneNumber: {
-        type: DataTypes.STRING,
+      originProvince: {
+        type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: "Phone Number is required",
+            msg: "Origin Province is required",
           },
           notNull: {
-            msg: "Phone Number is required",
+            msg: "Origin Province is required",
+          },
+        },
+      },
+      destinationProvince: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "Destination Province is required",
+          },
+          notNull: {
+            msg: "Destination Province is required",
           },
         },
       },
@@ -57,35 +68,11 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      provinceId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          notEmpty: {
-            msg: "Province is required",
-          },
-          notNull: {
-            msg: "Province is required",
-          },
-        },
-      },
-      cityId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          notEmpty: {
-            msg: "City is required",
-          },
-          notNull: {
-            msg: "City is required",
-          },
-        },
-      },
     },
     {
       sequelize,
-      modelName: "Branch",
+      modelName: "Forwarder",
     }
   );
-  return Branch;
+  return Forwarder;
 };

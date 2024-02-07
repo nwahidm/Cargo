@@ -69,7 +69,7 @@ class CityController {
       let payload = {};
       if (!isEmpty(name)) assign(payload, { name });
       if (!isEmpty(provinceId)) assign(payload, { provinceId });
-      if (!isEmpty(status)) assign(payload, { status });
+      if (status) assign(payload, { status });
 
       await City.update(payload, { where: { id } });
 

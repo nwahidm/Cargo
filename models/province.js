@@ -28,6 +28,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       status: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "Status is required",
+          },
+          notNull: {
+            msg: "Status is required",
+          },
+        },
       },
     },
     {
