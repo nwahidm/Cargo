@@ -4,7 +4,15 @@ const { Branch, City, Province } = require("../models");
 class BranchController {
   static async create(req, res, next) {
     const { name, address, phoneNumber, provinceId, cityId, status } = req.body;
-    console.log("[CREATE BRANCH]", name, address, phoneNumber, provinceId, cityId, status);
+    console.log(
+      "[CREATE BRANCH]",
+      name,
+      address,
+      phoneNumber,
+      provinceId,
+      cityId,
+      status
+    );
     try {
       await Branch.create({
         name,
@@ -63,7 +71,16 @@ class BranchController {
   static async updateBranch(req, res, next) {
     const id = req.params.id;
     const { name, address, phoneNumber, provinceId, cityId, status } = req.body;
-    console.log("[UPDATE CITY]", id, name, address, phoneNumber, provinceId, cityId, status);
+    console.log(
+      "[UPDATE CITY]",
+      id,
+      name,
+      address,
+      phoneNumber,
+      provinceId,
+      cityId,
+      status
+    );
     try {
       const targetBranch = await Branch.findByPk(id);
 
@@ -75,7 +92,7 @@ class BranchController {
       if (!isEmpty(phoneNumber)) assign(payload, { phoneNumber });
       if (!isEmpty(provinceId)) assign(payload, { provinceId });
       if (!isEmpty(cityId)) assign(payload, { cityId });
-      if (status) assign(payload, { status });
+      if (!isEmpty(status)) assign(payload, { status });
 
       await Branch.update(payload, { where: { id } });
 

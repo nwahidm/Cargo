@@ -64,7 +64,7 @@ class ProvinceController {
 
       let payload = {};
       if (!isEmpty(name)) assign(payload, { name });
-      if (status) assign(payload, { status });
+      if (!isEmpty(status)) assign(payload, { status });
 
       await Province.update(payload, { where: { id } });
 
