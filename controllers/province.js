@@ -1,5 +1,6 @@
 const { isEmpty, assign } = require("lodash");
 const { Province } = require("../models");
+const { Op } = require("sequelize");
 
 class ProvinceController {
   static async create(req, res, next) {
@@ -21,15 +22,29 @@ class ProvinceController {
   }
 
   static async fetchAllProvinces(req, res, next) {
-    console.log("[FETCH ALL Provinces]");
+    const { name, status } = req.body;
+    console.log("[FETCH ALL Provinces]", name, status);
     try {
-      const provinces = await Province.findAll({
-        order: [["name", "ASC"]],
-      });
+      let where = {};
+      if (!isEmpty(name)) assign(where, { name: { [Op.iLike]: `%${name}%` } });
+      if (!isEmpty(status)) assign(where, { status });
+
+      const [totalRecords, filteredRecords, provincesData] = await Promise.all([
+        Province.count({}),
+        Province.count({ where }),
+        Province.findAll({
+          where,
+          order: [["name", "ASC"]],
+        }),
+      ]);
 
       res.status(200).json({
         status: 200,
-        data: provinces,
+        data: {
+          totalRecords,
+          filteredRecords,
+          provincesData,
+        },
       });
     } catch (error) {
       next(error);

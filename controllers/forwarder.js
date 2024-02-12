@@ -1,5 +1,6 @@
 const { isEmpty, assign } = require("lodash");
 const { Province, Forwarder } = require("../models");
+const { Op } = require("sequelize");
 
 class ForwarderController {
   static async create(req, res, next) {
@@ -29,22 +30,43 @@ class ForwarderController {
   }
 
   static async fetchAllForwarders(req, res, next) {
-    console.log("[FETCH ALL FORWARDERS]");
+    const { name, originProvince, destinationProvince, status } = req.body;
+    console.log(
+      "[FETCH ALL FORWARDERS]",
+      name,
+      originProvince,
+      destinationProvince,
+      status
+    );
     try {
-      const forwarders = await Forwarder.findAll({
-        include: [
-          { model: Province, as: "Origin" },
-          { model: Province, as: "Destination" },
-        ],
-        order: [["name", "ASC"]],
-      });
+      let where = {};
+      if (!isEmpty(name))  assign(where, { name: { [Op.iLike]: `%${name}%` } });
+      if (!isEmpty(originProvince)) assign(where, { originProvince });
+      if (!isEmpty(destinationProvince)) assign(where, { destinationProvince });
+      if (!isEmpty(status)) assign(where, { status });
+
+      const [totalRecords, filteredRecords, forwardersData] = await Promise.all([
+        Forwarder.count({}),
+        Forwarder.count({where}),
+        Forwarder.findAll({
+          where,
+          include: [
+            { model: Province, as: "Origin" },
+            { model: Province, as: "Destination" },
+          ],
+          order: [["name", "ASC"]],
+        })
+      ])
 
       res.status(200).json({
         status: 200,
-        data: forwarders,
+        data: {
+          totalRecords,
+          filteredRecords,
+          forwardersData
+        },
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }

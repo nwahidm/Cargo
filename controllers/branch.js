@@ -1,5 +1,6 @@
 const { isEmpty, assign } = require("lodash");
 const { Branch, City, Province } = require("../models");
+const { Op } = require("sequelize");
 
 class BranchController {
   static async create(req, res, next) {
@@ -33,16 +34,32 @@ class BranchController {
   }
 
   static async fetchAllBranchs(req, res, next) {
-    console.log("[FETCH ALL BRANCHS]");
+    const { name, provinceId, cityId, status } = req.body;
+    console.log("[FETCH ALL BRANCHS]", name, provinceId, cityId, status);
     try {
-      const branchs = await Branch.findAll({
-        include: [{ model: Province }, { model: City }],
-        order: [["name", "ASC"]],
-      });
+      let where = {};
+      if (!isEmpty(name)) assign(where, { name: { [Op.iLike]: `%${name}%` } });
+      if (!isEmpty(provinceId)) assign(where, { provinceId });
+      if (!isEmpty(cityId)) assign(where, { cityId });
+      if (!isEmpty(status)) assign(where, { status });
+
+      const [totalRecords, filteredRecords, branchsData] = await Promise.all([
+        Branch.count({}),
+        Branch.count({ where }),
+        Branch.findAll({
+          where,
+          include: [{ model: Province }, { model: City }],
+          order: [["name", "ASC"]],
+        }),
+      ]);
 
       res.status(200).json({
         status: 200,
-        data: branchs,
+        data: {
+          totalRecords,
+          filteredRecords,
+          branchsData,
+        },
       });
     } catch (error) {
       next(error);

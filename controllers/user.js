@@ -2,6 +2,7 @@ const { isEmpty, assign } = require("lodash");
 const { compareHash, hashPassword } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
 const { User } = require("../models");
+const { Op } = require("sequelize");
 
 class UserController {
   static async register(req, res, next) {
@@ -53,15 +54,29 @@ class UserController {
   }
 
   static async fetchAllUser(req, res, next) {
-    console.log("[FETCH ALL USER]");
+    const { username } = req.body;
+    console.log("[FETCH ALL USER]", username);
     try {
-      const users = await User.findAll();
+      let where = {};
+      if (!isEmpty(username))
+        assign(where, { username: { [Op.iLike]: `%${username}%` } });
+
+      const [totalRecords, filteredRecords, usersData] = await Promise.all([
+        User.count({}),
+        User.count({ where }),
+        User.findAll({ where }),
+      ]);
 
       res.status(200).json({
         status: 200,
-        data: users,
+        data: {
+          totalRecords,
+          filteredRecords,
+          usersData,
+        },
       });
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }
