@@ -32,6 +32,9 @@ const errorHandler = (error, req, res, next) => {
   } else if (error.name == "InvalidForwarderId") {
     code = 404;
     message = "Forwarder Not Found";
+  } else if (error.name == "InvalidCustomerId") {
+    code = 404;
+    message = "Customer Not Found";
   }
 
   res.status(code).json({ status: code, message });
