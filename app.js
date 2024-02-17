@@ -15,6 +15,8 @@ app.use("/city", require("./routes/city"));
 app.use("/branch", require("./routes/branch"));
 app.use("/forwarder", require("./routes/forwarder"));
 app.use("/customer", require("./routes/customer"));
+app.use("/role", require("./routes/role"));
+
 
 app.use(errorHandler);
 

@@ -1,7 +1,7 @@
 const { isEmpty, assign } = require("lodash");
 const { compareHash, hashPassword } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
-const { User } = require("../models");
+const { User, Role } = require("../models");
 const { Op } = require("sequelize");
 
 class UserController {
@@ -48,7 +48,6 @@ class UserController {
         },
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -64,7 +63,7 @@ class UserController {
       const [totalRecords, filteredRecords, usersData] = await Promise.all([
         User.count({}),
         User.count({ where }),
-        User.findAll({ where }),
+        User.findAll({ where, include: [{ model: Role }] }),
       ]);
 
       res.status(200).json({
@@ -76,7 +75,6 @@ class UserController {
         },
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -85,7 +83,9 @@ class UserController {
     const id = req.params.id;
     console.log("[FETCH DETAIL USER]", id);
     try {
-      const targetUser = await User.findByPk(id);
+      const targetUser = await User.findByPk(id, {
+        include: [{ model: Role }],
+      });
 
       if (isEmpty(targetUser)) throw { name: "InvalidUserId" };
 
@@ -100,8 +100,8 @@ class UserController {
 
   static async updateUser(req, res, next) {
     const id = req.params.id;
-    const { username, password } = req.body;
-    console.log("[UPDATE USER]", id, username, password);
+    const { username, password, roleId } = req.body;
+    console.log("[UPDATE USER]", id, username, password, roleId);
     try {
       const targetUser = await User.findByPk(id);
 
@@ -112,6 +112,12 @@ class UserController {
       if (!isEmpty(password)) {
         const newPassword = hashPassword(password);
         assign(payload, { password: newPassword });
+      }
+      if (!isEmpty(roleId)) {
+        const targetRole = await Role.findByPk(roleId);
+        if (isEmpty(targetRole)) throw { name: "InvalidRoleId" };
+
+        assign(payload, { roleId });
       }
 
       await User.update(payload, { where: { id } });

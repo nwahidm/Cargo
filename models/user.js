@@ -9,7 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      User.belongsTo(models.Role, {
+        foreignKey: "roleId",
+      });
     }
   }
   User.init(
@@ -40,6 +42,18 @@ module.exports = (sequelize, DataTypes) => {
           len: {
             args: [5],
             msg: "password must has atleast 5 characters",
+          },
+        },
+      },
+      roleId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "Role is required",
+          },
+          notNull: {
+            msg: "Role is required",
           },
         },
       },

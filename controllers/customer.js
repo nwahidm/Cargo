@@ -1,6 +1,4 @@
 const { isEmpty, assign } = require("lodash");
-const { compareHash, hashPassword } = require("../helpers/bcrypt");
-const { signToken } = require("../helpers/jwt");
 const { Customer } = require("../models");
 const { Op } = require("sequelize");
 
