@@ -38,6 +38,9 @@ const errorHandler = (error, req, res, next) => {
   } else if (error.name == "InvalidRoleId") {
     code = 404;
     message = "Role Not Found";
+  } else if (error.name == "InvalidServiceId") {
+    code = 404;
+    message = "Service Not Found";
   }
 
   res.status(code).json({ status: code, message });
