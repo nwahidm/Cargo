@@ -6,13 +6,14 @@ const { Op } = require("sequelize");
 
 class UserController {
   static async register(req, res, next) {
-    const { username, password } = req.body;
-    console.log("[CREATE USER]", username, password);
+    const { username, password, roleId } = req.body;
+    console.log("[CREATE USER]", username, password, roleId);
     try {
       const hashedPassword = hashPassword(password);
       await User.create({
         username,
         password: hashedPassword,
+        roleId
       });
 
       res.status(201).json({
